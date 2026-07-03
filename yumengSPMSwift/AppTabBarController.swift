@@ -21,7 +21,11 @@ final class AppTabBarController: UITabBarController {
         swiftUINav.tabBarItem = UITabBarItem(title: "SwiftUI", image: tabImage("chart.bar"), tag: 2)
         style(navigationController: swiftUINav)
 
-        viewControllers = [swiftNav, ocNav, swiftUINav]
+        let snapKitNav = UINavigationController(rootViewController: SnapKitMarketViewController(style: .plain))
+        snapKitNav.tabBarItem = UITabBarItem(title: "SnapKit", image: tabImage("rectangle.grid.1x2"), tag: 3)
+        style(navigationController: snapKitNav)
+
+        viewControllers = [swiftNav, ocNav, swiftUINav, snapKitNav]
     }
 
     private func tabImage(_ name: String) -> UIImage? {
