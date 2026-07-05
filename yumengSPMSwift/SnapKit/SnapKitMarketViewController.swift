@@ -18,12 +18,15 @@ final class SnapKitMarketViewController: UITableViewController {
         tableView.register(SnapKitQuoteTableViewCell.self, forCellReuseIdentifier: "SnapKitQuoteCell")
         tableView.tableHeaderView = makeHeaderView()
 
+        // 创建系统下拉刷新控件。
         refreshControl = UIRefreshControl()
+        // `.valueChanged` 表示用户下拉触发刷新时发送的事件，触发后调用 refreshQuotes。
         refreshControl?.addTarget(self, action: #selector(refreshQuotes), for: .valueChanged)
         refreshQuotes()
     }
 
     private func makeHeaderView() -> UIView {
+        // tableHeaderView 的宽度会跟随 tableView，这里主要设置固定高度 72。
         let header = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 72))
         header.backgroundColor = UIColor(hex: 0xF3F6FA)
 

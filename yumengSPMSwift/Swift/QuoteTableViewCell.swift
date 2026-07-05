@@ -67,11 +67,19 @@ final class QuoteTableViewCell: UITableViewCell {
 }
 
 extension UIColor {
+    // 允许用 16 进制颜色创建 UIColor，例如 UIColor(hex: 0xD93025)。
+    // 0xD93025 可以拆成三段：D9 是红色，30 是绿色，25 是蓝色。
+    // `convenience init` 是便利初始化方法：提供一个更好用的入口，内部还是调用 UIColor 原有的初始化方法。
     convenience init(hex: UInt) {
         self.init(
+            // `hex >> 16` 把红色段移动到最后，再用 `& 0xff` 只保留最后 8 位。
+            // 除以 255.0 是因为 UIColor 的 red/green/blue 取值范围是 0.0 到 1.0。
             red: CGFloat((hex >> 16) & 0xff) / 255.0,
+            // `hex >> 8` 取绿色段。
             green: CGFloat((hex >> 8) & 0xff) / 255.0,
+            // 不右移，直接用 `& 0xff` 取蓝色段。
             blue: CGFloat(hex & 0xff) / 255.0,
+            // alpha 是透明度，1 表示完全不透明。
             alpha: 1
         )
     }

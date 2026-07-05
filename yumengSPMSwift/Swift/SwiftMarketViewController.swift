@@ -16,12 +16,15 @@ final class SwiftMarketViewController: UITableViewController {
         tableView.rowHeight = 74
         tableView.tableHeaderView = makeHeaderView(title: "Alamofire 请求")
 
+        // 创建系统下拉刷新控件。
         refreshControl = UIRefreshControl()
+        // `.valueChanged` 表示用户下拉触发刷新时发送的事件，触发后调用 refreshQuotes。
         refreshControl?.addTarget(self, action: #selector(refreshQuotes), for: .valueChanged)
         refreshQuotes()
     }
 
     private func makeHeaderView(title: String) -> UIView {
+        // tableHeaderView 的宽度会跟随 tableView，这里主要设置固定高度 72。
         let header = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 72))
         header.backgroundColor = UIColor(hex: 0xF3F6FA)
 
@@ -44,10 +47,14 @@ final class SwiftMarketViewController: UITableViewController {
             guard let self = self else { return }
             self.refreshControl?.endRefreshing()
             switch result {
+            // `.success` 里带着成功返回的 [MarketQuote]；`let quotes` 是把这个关联值取出来使用。
+            // quotes 的类型由 fetchQuotes 的 Result<[MarketQuote], Error> 推断，通常不用、也不需要在这里额外写类型。
             case .success(let quotes):
                 self.quotes = quotes
                 self.statusLabel.text = "新浪实时行情 · 已更新 \(Self.timeText())"
                 self.tableView.reloadData()
+            // 这里不关心具体 error，只需要提示失败，所以可以省略参数，直接写 `case .failure:`。
+            // 如果要拿到错误对象，可以写成 `case .failure(let error):`。
             case .failure:
                 self.showMessage("Swift行情刷新失败，请稍后重试")
             }
