@@ -114,10 +114,14 @@
     return value.length > 0 ? value : fallback;
 }
 
+// 判断字符串是否能按数字解析，用来适配新浪接口不同字段顺序。
+// 如果第一个字段不是数字，更可能是名称字段；如果是数字，更可能是价格/数值字段。
 - (BOOL)isNumericString:(NSString *)text {
+    // 空字符串不能当作有效数字。
     if (text.length == 0) {
         return NO;
     }
+    // NSScanner 尝试从字符串中扫描 double；这里只关心能否扫描成功，所以结果位置传 NULL。
     return [[NSScanner scannerWithString:text] scanDouble:NULL];
 }
 

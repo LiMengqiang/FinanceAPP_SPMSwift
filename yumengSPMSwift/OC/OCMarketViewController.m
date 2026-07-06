@@ -51,21 +51,23 @@
 }
 
 - (void)refreshQuotes {
+    // block 会持有它内部直接使用的对象；先用 weakSelf 避免 self 和请求回调之间形成循环引用。
     __weak typeof(self) weakSelf = self;
     [self.quoteService fetchQuotesWithCompletion:^(NSArray<OCMarketQuote *> *quotes, NSError *error) {
-        __strong typeof(weakSelf) self = weakSelf;
-        if (!self) {
+        // 回调开始后再把 weakSelf 转成 strongSelf，保证下面代码执行期间页面对象不会突然释放。
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        if (!strongSelf) {
             return;
         }
 
-        [self.refreshControl endRefreshing];
-        self.quotes = quotes;
+        [strongSelf.refreshControl endRefreshing];
+        strongSelf.quotes = quotes;
         if (!error) {
-            self.statusLabel.text = [NSString stringWithFormat:@"新浪实时行情 · 已更新 %@", [self timeText]];
-            [self.tableView reloadData];
+            strongSelf.statusLabel.text = [NSString stringWithFormat:@"新浪实时行情 · 已更新 %@", [strongSelf timeText]];
+            [strongSelf.tableView reloadData];
         } else {
-            [self.tableView reloadData];
-            [self showMessage:@"OC行情刷新失败，请稍后重试"];
+            [strongSelf.tableView reloadData];
+            [strongSelf showMessage:@"OC行情刷新失败，请稍后重试"];
         }
     }];
 }
